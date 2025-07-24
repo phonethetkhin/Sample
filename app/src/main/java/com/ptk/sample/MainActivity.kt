@@ -17,9 +17,24 @@ class MainActivity : AppCompatActivity() {
 
         viewPager.adapter = ViewPagerAdapter(this)
 
+        viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                viewPager.post {
+                    val recyclerView = viewPager.getChildAt(0) as RecyclerView
+                    val holder = recyclerView.findViewHolderForAdapterPosition(position)
+                    val view = holder?.itemView
 
+                    if (view != null) {
+                        view.measure(
+                            View.MeasureSpec.makeMeasureSpec(view.width, View.MeasureSpec.EXACTLY),
+                            View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+                        )
+                        val measuredHeight = view.measuredHeight
+                        viewPager.layoutParams.height = measuredHeight
+                        viewPager.requestLayout()
+                    }
+                }
+            }
+        })
     }
-
-
-
 }
